@@ -19,17 +19,13 @@ func main() {
 	case "capture":
 		cmd.RunCapture()
 	case "replay":
-		replay()
+		cmd.RunReplay()
 	case "inspect":
 		inspect()
 	default:
 		fmt.Println("Expected 'capture', 'replay', or 'inspect' subcommands")
 		os.Exit(1)
 	}
-}
-
-func replay() {
-	fmt.Println("Replaying...")
 }
 
 func inspect() {

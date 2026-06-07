@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"bufio"
 )
 
 type Record struct {
@@ -28,5 +30,29 @@ func NewWriter(path string) (*os.File, *json.Encoder, error) {
 }
 
 func ReadAll(path string) ([]Record, error) {
-	panic("Not implemented") // TODO: Implement this
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	var records []Record
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		lineBytes := scanner.Bytes()
+		var r Record
+
+		err := json.Unmarshal(lineBytes, &r)
+		if err != nil {
+			return nil, err
+		}
+		records = append(records, r)
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return records, nil
 }
