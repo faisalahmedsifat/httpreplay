@@ -1,33 +1,32 @@
 package main
 
 import (
-	"fmt"
+	"httpreplay/cmd"
+	"log"
 	"os"
 
-	"httpreplay/cmd"
+	"github.com/urfave/cli"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Expected 'capture', 'replay', or 'inspect' subcommands")
-		os.Exit(1)
+	app := &cli.App{
+		Name:  "HttpReplay",
+		Usage: "A CLI tool for capturing and replaying HTTP traffic",
+		Commands: []cli.Command{
+			{
+				Name:   "capture",
+				Usage:  "Capture HTTP traffic",
+				Action: cmd.RunCapture,
+			},
+			{
+				Name:   "replay",
+				Usage:  "Replay captured HTTP traffic",
+				Action: cmd.RunReplay,
+			},
+		},
 	}
 
-	command := os.Args[1]
-
-	switch command {
-	case "capture":
-		cmd.RunCapture()
-	case "replay":
-		cmd.RunReplay()
-	case "inspect":
-		inspect()
-	default:
-		fmt.Println("Expected 'capture', 'replay', or 'inspect' subcommands")
-		os.Exit(1)
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
-}
-
-func inspect() {
-	fmt.Println("Inspecting...")
 }
